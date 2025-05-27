@@ -1,12 +1,14 @@
-# Imports
+#Imports
 import numpy as np
-# import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 import torch
-import torch.nn as nn
 import torchvision
+import torch.nn as nn
+from IPython.display import Image
 import os
+
 
 
 # LOAD DATA
@@ -47,6 +49,9 @@ print(f'Test data targets shape: {len(test_targets)}')
 
 # Print dimensions of an individual image
 print(f'Individual image dimensions: {train_features[0].shape if train_features else "No images found"}')
+
+
+
 
 
 
