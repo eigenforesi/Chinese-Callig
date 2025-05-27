@@ -8,23 +8,11 @@ import torchvision
 import torch.nn as nn
 from IPython.display import Image
 import os
-print(np.__version__)
-print(torch.__version__)
-print(torchvision.__version__)
+
 
 
 # LOAD DATA
-# Convert .jpg images to numpy arrays
-train_data_dir = 'archive/data/data/train'
-train_data = os.listdir(train_data_dir)
-
-test_data_dir = 'archive/data/data/test'
-test_data = os.listdir(test_data_dir)
-test_data_array = np.array(test_data)
-print(test_data_array.shape)
-
 # Traverse through the 20 directories in the training and testing data directories, and extract images from each directory
-
 train_features = []
 test_features = []
 train_targets = []
@@ -62,5 +50,3 @@ print(f'Test data targets shape: {test_targets.shape}')
 
 # Print dimensions of an individual image
 print(f'Individual image dimensions: {train_features[0].shape if train_features else "No images found"}')
-
-# Data Pre-processing
