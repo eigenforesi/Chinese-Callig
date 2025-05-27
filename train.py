@@ -7,3 +7,8 @@ import torch
 import torchvision
 import torch.nn as nn
 from IPython.display import Image
+import os
+
+train_data_dir = 'archive/data/data/train'
+train_data = os.listdir(train_data_dir)
+
