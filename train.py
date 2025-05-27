@@ -32,20 +32,21 @@ for dir_name in os.listdir(base_dir):
                 for file in os.listdir(sub_dir_path): # Traverse through all files in the sub-directory
                     if file.endswith('.jpg'):
                         img_path = os.path.join(sub_dir_path, file) # Get the full path of the image file
-                        img = torchvision.io.read_image(img_path)
+                        # img = torchvision.io.read_image(img_path)
                         if category == 'train':
-                            train_features.append(img.numpy())
-                            # train_features.append(np.array(img_path))
+                            # train_features.append(img.numpy())
+                            train_features.append(np.array(img_path))
                             train_targets.append(sub_dir)
                         elif category == 'test':
-                            test_features.append(img.numpy())
-                            # test_features.append(np.array(img_path))
+                            # test_features.append(img.numpy())
+                            test_features.append(np.array(img_path))
                             test_targets.append(sub_dir)
+        print("Extracted images from directory:", dir_name)
 
-print(f'Training data features shape: {len(train_features)}')
-print(f'Training data targets shape: {len(train_targets)}')
-print(f'Test data features shape: {len(test_features)}')
-print(f'Test data targets shape: {len(test_targets)}')
+print(f'Training data features shape: {train_features.shape}')
+print(f'Training data targets shape: {train_targets.shape}')
+print(f'Test data features shape: {test_features.shape}')
+print(f'Test data targets shape: {test_targets.shape}')
 
 # Print dimensions of an individual image
 print(f'Individual image dimensions: {train_features[0].shape if train_features else "No images found"}')
