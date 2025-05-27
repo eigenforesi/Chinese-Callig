@@ -43,17 +43,16 @@ for dir_name in os.listdir(base_dir):
                             test_targets.append(sub_dir)
         print("Extracted images from directory:", dir_name)
 
-print(f'Training data features shape: {train_features.shape}')
-print(f'Training data targets shape: {train_targets.shape}')
-print(f'Test data features shape: {test_features.shape}')
-print(f'Test data targets shape: {test_targets.shape}')
+# print(f'Training data features shape: {train_features.shape}')
+# print(f'Training data targets shape: {train_targets.shape}')
+# print(f'Test data features shape: {test_features.shape}')
+# print(f'Test data targets shape: {test_targets.shape}')
 
 # Print dimensions of an individual image
 print(f'Individual image dimensions: {train_features[0].shape if train_features else "No images found"}')
 
-
-
-
+##print what type is train_feature
+print(f'Train features type: {type(train_features[0])}')
 
 
 
