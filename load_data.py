@@ -40,11 +40,12 @@ class CalligData:
                                     self.test_targets.append(sub_dir)
                     print(f'Extracted images from {sub_dir_path} in {dir_name} directory')
                 print("Extracted images from directory:", dir_name)
-        print(f'Training data features type: {type(self.train_features[0])}')
-        print(f'Training data features shape: {self.train_features[0].shape}')
+        #print(f'Training data features type: {type(self.train_features[0])}') <class 'numpy.ndarray'>
+        #print(f'Training data features shape: {self.train_features[0].shape}') 
 
         # Print dimensions of an individual image
-        print(f'Individual image dimensions: {self.train_features[0].shape if self.train_features else "No images found"}')
+        print(f'Individual image dimensions: {self.train_features[0].shape if self.train_features else "No images found"}') 
+        # Individual image dimensions: (64, 64, 3) Training data features shape: (64, 64, 3)
 
     def get_train_features(self):
         return np.array(self.train_features)
@@ -58,7 +59,6 @@ class CalligData:
     def get_test_targets(self):
         return np.array(self.test_targets)
     
-### Next step: Make it into torch tensor, make validation set
 
 
 
