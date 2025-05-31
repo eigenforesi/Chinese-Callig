@@ -63,6 +63,6 @@ class CalligData:
 
 
 # TESTING
-data = CalligData(base_dir='archive/data/data')
-data.load_data()
+# data = CalligData(base_dir='archive/data/data')
+# data.load_data()
 
