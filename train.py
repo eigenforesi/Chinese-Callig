@@ -134,7 +134,7 @@ def main():
 
     ### Training Loop
     import tqdm
-    num_epochs = 25
+    num_epochs = 5
 
     # Learning Rate Scheduler
     scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=3, gamma=0.5)
@@ -202,6 +202,49 @@ def main():
     test_accuracy = 100 * correct / total if total > 0 else 0  # Calculate test accuracy
     print(f"Test Accuracy: {test_accuracy:.2f}%")  # Print the test accuracy
 
+    ############ Show example of the model #################################
+    model.eval()
+    num_examples = 5
+
+    # random examples, can sample random indices:
+    import random
+    sample_ids = random.sample(range(len(test_dataset)), num_examples)
+
+    images = []
+    true_labels = []
+    for idx in sample_ids:
+        img, true_idx = test_dataset[idx]
+        images.append(img)               # img shape: (3, 64, 64)
+        true_labels.append(true_idx.item())
+    
+    # 2. Run them through the model to get predicted IDs
+
+    imgs_tensor = torch.stack(images).to(device)            # shape (N, 3, 64, 64)
+    with torch.no_grad():
+        outputs = model(imgs_tensor)                        # shape (N, 20)
+        _, pred_ids = torch.max(outputs, dim=1)             # shape (N,)
+
+    pred_ids = pred_ids.cpu().numpy().tolist()
+
+    # 3. Convert indices back to calligrapher names
+    true_names = le.inverse_transform(true_labels)           # array of strings
+    pred_names = le.inverse_transform(pred_ids)              # array of strings
+
+    # 4. Plot each of the sampled images with titles
+    import matplotlib.pyplot as plt
+
+    plt.figure(figsize=(12, 6))
+    for i in range(num_examples):
+        ax = plt.subplot(1, num_examples, i+1)
+        img = images[i].cpu().permute(1, 2, 0).numpy()      # (64, 64, 3)
+        ax.imshow(img.astype(np.uint8))
+        ax.axis("off")
+        ax.set_title(f"True: {true_names[i]}\nPred: {pred_names[i]}", fontsize=10)
+    plt.tight_layout()
+    plt.show()
+
+    ####################################################
+
     # Visualize training loss and validation accuracy
 
     plt.figure(figsize=(15, 9))
@@ -230,3 +273,5 @@ def main():
 
 if __name__ == "__main__":
     main()  # Run the main function to train the model
+
+
