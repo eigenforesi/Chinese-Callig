@@ -138,7 +138,8 @@ def main():
 
     # Identify Tracked Values
     train_loss_list = []             
-    validation_accuracy_list = [] 
+    val_acc_list = [] = [] 
+    val_loss_list = []   
 
     ### Training Loop
     import tqdm
@@ -149,6 +150,8 @@ def main():
 
     for epoch in range(num_epochs):
         model.train()
+        running_train_loss = 0.0       # ← initialize before the batch loop
+        num_train_batches = 0          # ← initialize before the batch loop
         #Training loop
         for xb, yb in train_loader:  # Iterate over batches of training data
             
@@ -159,42 +162,54 @@ def main():
             loss.backward()  # Backward pass: compute gradients
             optimizer.step()  # Update model parameters using the optimizer
 
-        # Get the training loss for this epoch
-        train_loss_list.append(loss.item())  # Store the training loss for this batch
-            # train_loss_list.append(loss.item()) # Store the training loss for this batch
-        
-        # Validation
-        model.eval()  # Set the model to evaluation mode
-        val_loss = 0
-        with torch.no_grad():  # Disable gradient computation for validation
-            for xb, yb in val_loader:
-                
-                output = model(xb)  # Forward pass: compute model predictions
-                loss = loss_func(output, yb)  # Compute the loss between predictions and true labels
-                val_loss += loss.item()  # Accumulate validation loss
-        
-        val_loss /= len(val_loader)  # Average validation loss
+            running_train_loss += loss.item()  # Get the training loss for this batch
+            num_train_batches += 1  # Increment the number of training batches
 
-        # Calculate validation accuracy
-        correct = 0
-        total = 0
+            # Compute average training loss for this epoch
+            avg_train_loss = running_train_loss / num_train_batches
+            train_loss_list.append(avg_train_loss)
+        
+        
+            # Validation
+            model.eval()
+            running_val_loss = 0.0
+            correct = 0
+            total = 0
+            num_val_batches = 0
+
         with torch.no_grad():
             for xb, yb in val_loader:
+                xb, yb = xb.to(device), yb.to(device)
                 outputs = model(xb)
+                loss = loss_func(outputs, yb)
+
+                running_val_loss += loss.item()
+                num_val_batches += 1
+
+                # For accuracy
                 _, predicted = torch.max(outputs.data, 1)
                 total += yb.size(0)
                 correct += (predicted == yb).sum().item()
+
+        # Compute average validation loss and accuracy
+        avg_val_loss = running_val_loss / num_val_batches
         val_accuracy = 100 * correct / total if total > 0 else 0
 
-        validation_accuracy_list.append(val_loss)  # Store the validation loss for this epoch
+        val_loss_list.append(avg_val_loss)
+        val_acc_list.append(val_accuracy)
 
-        scheduler.step()  # Step the learning rate scheduler
+        scheduler.step()
 
-        print(f"Epoch [{epoch+1}/{num_epochs}], Train Loss: {np.mean(train_loss_list):.4f}, Val Loss: {val_loss:.4f}, Val Accuracy: {val_accuracy:.2f}%")
+        print(
+            f"Epoch [{epoch+1}/{num_epochs}], "
+            f"Train Loss: {avg_train_loss:.4f}, "
+            f"Val Loss: {avg_val_loss:.4f}, "
+            f"Val Accuracy: {val_accuracy:.2f}%"
+        )
 
 
     # Save the trained model
-    torch.save(model.state_dict(), 'call_classifier.pth')  # Save the model state dictionary
+    torch.save(model.state_dict(), 'call_classifier.pth')
 
 
     # Test the model on the testing dataset
@@ -252,25 +267,25 @@ def main():
     plt.show()
 
     ####################################################
-
-    # Visualize training loss and validation accuracy
+    # Visualize training loss and validation accuracy  #
+    ####################################################
 
     plt.figure(figsize=(15, 9))
 
-    # Training loss
+    # Training loss plot
     plt.subplot(2, 1, 1)
     plt.plot(train_loss_list, linewidth=3)
     plt.ylabel("Training Loss")
-    plt.xlabel("Epochs")
-    plt.title("Training Loss per Epoch")
+    plt.xlabel("Epoch")
+    plt.title("Average Training Loss per Batch")
     sns.despine()
 
-    # Validation accuracy
+    # Validation accuracy plot
     plt.subplot(2, 1, 2)
-    plt.plot(validation_accuracy_list, linewidth=3, color='gold')
-    plt.ylabel("Validation Accuracy")
-    plt.xlabel("Epochs")
-    plt.title("Validation Accuracy per Epoch")
+    plt.plot(val_acc_list, linewidth=3)
+    plt.ylabel("Validation Accuracy (%)")
+    plt.xlabel("Epoch")
+    plt.title("Validation Accuracy per Batch")
     sns.despine()
 
     plt.tight_layout()
@@ -279,7 +294,7 @@ def main():
 
     print("Plot saved as 'training_validation_plot.png'.")
 
-
+   
 if __name__ == "__main__":
     main()  # Run the main function to train the model
 
