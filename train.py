@@ -9,6 +9,7 @@ import torch.nn as nn
 from IPython.display import Image
 import os
 from load_data import CalligData
+# from torchview import draw_graph
 
 
 ### Model Architecture
@@ -127,6 +128,13 @@ def main():
     model.to(device)
     loss_func = nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+
+    # Vizualize the model architecture
+    
+    # model_graph = draw_graph(model, input_size=[(3, 64, 64)],  # adjust size if needed
+    #                      expand_nested=True,
+    #                      device='cpu')  # or 'cuda' if using GPU
+    # model_graph.render("callclassifier_diagram", format="png")
 
     # Identify Tracked Values
     train_loss_list = []             
@@ -270,6 +278,7 @@ def main():
     plt.show()
 
     print("Plot saved as 'training_validation_plot.png'.")
+
 
 if __name__ == "__main__":
     main()  # Run the main function to train the model
